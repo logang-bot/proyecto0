@@ -1,27 +1,22 @@
 const router  = require('express').Router()
-
-
+const user = require('../controllers/user')
+const passport = require('passport')
 //rutas para el restaurante
-router.get
-router.post
-router.put
-router.patch
+
 
 //rutas para el usuario
-router.get
-router.post
-router.put
+router.get('/user/list', user.index)
+router.post('/user/signUp', user.signUp)
+router.post('/user/logIn', user.login2, user.logIn)
+router.put('/user/editUser')
+router.delete('/user/deleteUser')
 
 //rutas para el menu
-router.get
-router.post
-router.put
+
 
 //rutas para la orden
-router.get
-router.post
-router.put
 
+//.......
 router.get('/', (req,res)=>{
     res.send('works')
 })
