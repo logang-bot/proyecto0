@@ -8,8 +8,8 @@ const passport = require('passport')
 router.get('/user/list', user.index)
 router.post('/user/signUp', user.signUp)
 router.post('/user/logIn', user.login2, user.logIn)
-router.put('/user/editUser')
-router.delete('/user/deleteUser')
+router.put('/user/editUser/:id', user.edit)
+router.delete('/user/deleteUser/:id', user.delete)
 
 //rutas para el menu
 

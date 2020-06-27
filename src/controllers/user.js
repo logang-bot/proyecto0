@@ -56,5 +56,15 @@ ctrl.login2 = async(req,res,next)=>{
         }
     }
 }
-
+ctrl.edit = async(req,res)=>{
+    const {name, email, password}=req.body
+    const userr = new user({password:password})
+    userr.password = await userr.encryptPass(password)
+    await user.findByIdAndUpdate(req.params.id, {name,email,password: userr.password})
+    res.send('actualizado correctamente')
+}
+ctrl.delete = async(req,res)=>{
+    await user.findByIdAndDelete(req.params.id)
+    res.send('el usuario fue eliminado')
+}
 module.exports = ctrl
