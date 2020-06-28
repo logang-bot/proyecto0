@@ -2,6 +2,7 @@ const passport = require('passport')
 const localStrategy  = require('passport-local').Strategy
 
 const {user}=require('../models')
+const {findById} = require('../models/user')
 
 passport.use(new localStrategy({
     usernameField: 'email'
@@ -9,31 +10,28 @@ passport.use(new localStrategy({
     const userr = await user.findOne({email:email})
     if(!userr){
         console.log('el usuario no existe ')
-        return
+        return done(null,false)
     }
     else{
         const match = await userr.matchPass(password)
         if(match){
-            //res.send('jk')
             console.log('logueado correctamente')
-            return
+            return done(null,userr)
         }
         else{
-            //res.send('jk')
             console.log('contrasenia incorrecta')
-            return 
+            return done(null,false)
         }
-        return
     }
 }))
 
-passport.serializeUser((user,done)=>{
-    done(null, user.id)
+passport.serializeUser((userr,done)=>{
+    done(null, userr.id)
 })
 
 passport.deserializeUser((id, done)=>{
-    user.findById(id,(err,user)=>{
-        done(err,user)
+    user.findById(id,(err,userr)=>{
+        done(err,userr)
     })
 })
 

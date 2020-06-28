@@ -36,8 +36,8 @@ ctrl.signUp = async (req,res)=>{
 }
 
 ctrl.logIn = passport.authenticate('local',{
-        successMessage: 'ok',
-        failureMessage: 'fail'
+        successRedirect: '/restnt/list',
+        failureRedirect: '/'
     })
 
 ctrl.login2 = async(req,res,next)=>{
@@ -68,7 +68,7 @@ ctrl.delete = async(req,res)=>{
     res.send('el usuario fue eliminado')
 }
 ctrl.logOut = (req,res)=>{
-    req.logOut()
+    req.logout()
     res.send('te has deslogueado')
 }
 
