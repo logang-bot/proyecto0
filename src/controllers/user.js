@@ -37,7 +37,8 @@ ctrl.signUp = async (req,res)=>{
 
 ctrl.logIn = passport.authenticate('local',{
         successRedirect: '/restnt/list',
-        failureRedirect: '/'
+        failureRedirect: '/',
+        failureFlash: true
     })
 
 ctrl.login2 = async(req,res,next)=>{

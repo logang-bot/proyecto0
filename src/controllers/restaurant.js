@@ -3,6 +3,11 @@ const {restaurant, user} = require('../models/')
 const { findById } = require('../models/menu')
 
 
+ctrl.myindex = async (req,res)=>{
+    const restnts = await restaurant.find({idPropietario:req.user.id})
+    res.status(200).json(restnts)
+}
+
 ctrl.index = async (req,res)=>{
     const restnts = await restaurant.find({})
     res.status(200).json(restnts)

@@ -1,5 +1,5 @@
 const helpers = {}
-helpers.isAuthenticatedd = (req,res,next)=>{
+helpers.isAuthenticated = (req,res,next)=>{
     if(req.isAuthenticated()){
         console.log('done')
         return next()

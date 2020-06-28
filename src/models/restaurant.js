@@ -6,8 +6,13 @@ const resSchema = new Schema({
     Nit: {type: String},
     Propietario: {type: String},
     idPropietario: {
-        type:Schema.Types.ObjectId, 
-        ref:'user'},
+        type: Schema.Types.ObjectId, 
+        ref:'user'
+    },
+    menus:[{
+        type: Schema.Types.ObjectId,
+        ref:'user'
+    }],
     Calle: {type: String},
     Telefono: {type: String},
     Long: {type:String},
