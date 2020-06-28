@@ -67,4 +67,9 @@ ctrl.delete = async(req,res)=>{
     await user.findByIdAndDelete(req.params.id)
     res.send('el usuario fue eliminado')
 }
+ctrl.logOut = (req,res)=>{
+    req.logOut()
+    res.send('te has deslogueado')
+}
+
 module.exports = ctrl

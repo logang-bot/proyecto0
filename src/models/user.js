@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const {Schema}=mongoose
 const bcrypt =require('bcryptjs')
+const restaurant = require('./restaurant')
 
 const userSchema = new Schema({
     name: {
@@ -18,7 +19,15 @@ const userSchema = new Schema({
     date:{
         type: Date,
         default: Date.now
-    }
+    },
+    restaurants: [{
+        type: Schema.Types.ObjectId,
+        ref: 'restaurant'
+    }],
+    ordenes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'orden'
+    }]
     
 })
 
