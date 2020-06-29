@@ -9,7 +9,11 @@ const menuSchema = new Schema({
     FotoProducto : {type: String},
     Restau: {
         type:Schema.Types.ObjectId, 
-        ref:'restaurant'}
+        ref:'restaurant'},
+    ContOrders: {
+        type:Number,
+        default: 0
+    }
 })
 
 module.exports = mongoose.model('menu', menuSchema)
