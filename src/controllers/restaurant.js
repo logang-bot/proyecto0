@@ -14,7 +14,6 @@ ctrl.index = async (req,res)=>{
 }
 
 ctrl.create = async (req,res)=>{
-    const {idUser} = req.params
     const newRestnt = new restaurant(req.body)
     const errors = []
     if(!newRestnt.Nombre){
@@ -38,7 +37,7 @@ ctrl.create = async (req,res)=>{
             res.send('este nombre ya esta en uso')
         }
         else{
-            const userr = await user.findById(idUser)
+            const userr = await user.findById(req.user.id)
             newRestnt.idPropietario = userr
             newRestnt.Propietario = userr.name
             await newRestnt.save()
@@ -52,7 +51,7 @@ ctrl.create = async (req,res)=>{
 }
 
 ctrl.edit = async (req,res)=>{
-    const {idUser, id} = req.params
+    const {id} = req.params
     const newRestnt = new restaurant(req.body)
     const errors = []
     if(!newRestnt.Nombre){
@@ -77,7 +76,7 @@ ctrl.edit = async (req,res)=>{
         }
         else{
             const restt = await restaurant.findById(id)
-            const userr = await user.findById(idUser)
+            const userr = await user.findById(req.user.id)
             if(restt.idPropietario._id.equals(userr._id)){
                 await restaurant.findByIdAndUpdate(id, {
                     Nombre: newRestnt.Nombre,
@@ -102,9 +101,9 @@ ctrl.edit = async (req,res)=>{
 }
 
 ctrl.delete = async (req, res) => {
-    const {idUser, id} = req.params
+    const {id} = req.params
     const restt = await restaurant.findById(id)
-    const userr = await user.findById(idUser)
+    const userr = await user.findById(req.user.id)
     if (restt.idPropietario._id.equals(userr._id)) {
         await restaurant.findByIdAndDelete(id)
         await userr.restaurants.remove(restt)
@@ -119,10 +118,10 @@ ctrl.delete = async (req, res) => {
 }
 
 ctrl.change = async (req,res) =>{
-    const {idUser, id} = req.params
+    const {id} = req.params
     const email = req.body.email
     const restt = await restaurant.findById(id)
-    const userr = await user.findById(idUser)
+    const userr = await user.findById(req.user.id)
     const nuser = await user.findOne({email: email})
     console.log(email)
     if (nuser){

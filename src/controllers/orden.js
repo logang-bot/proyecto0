@@ -3,7 +3,7 @@ const {menu,orden,user}= require('../models')
 const { findById } = require('../models/menu')
 
 ctrl.index = async (req,res)=>{
-    const ords = await orden.find({idUser:req.user.id})
+    const ords = await orden.find({idUser:req.user.id, stat: "1"})
     res.status(200).json(ords)
 }
 
@@ -20,64 +20,62 @@ ctrl.cart = async (req,res)=>{
     else{
         const men = await menu.findById(idMenu)
         console.log(men)
-        const total = men.Precio + "dsds"
-        newOr.PagoTotal = 12
+        const total = parseFloat(men.Precio)*parseFloat(newOr.Cantidad)
+        newOr.PagoTotal = total
         newOr.idMenu = men
         newOr.idUser = req.user.id
-        const usr = await user.findById(req.user.id)
-        usr.cart.push(newOr)
-        await usr.save()
-        console.log(usr)
         await newOr.save()
-        res.send('agregado correctamente')
-        /*men.ContOrders+=1
+        men.ContOrders+=1
         await men.save()
-        res.send('agregado al carrito')
-        await newOr.save()*/
+        res.send('agregado correctamente')
     }
-    
 }
 
 ctrl.getcart = async (req,res)=>{
-    const {id} = req.params
-    const usr = await user.findById(req.user.id)
-    const carrr  = await usr.cart
-    res.send(carrr)
+    const ords = await orden.find({idUser:req.user.id, stat: "0"})
+    res.status(200).json(ords)
 }
 
 ctrl.edit = async (req,res)=>{
     const {Cantidad, Long, Lat} = new orden(req.body)
     const {id} = req.params
-    const errors = []
-    if(!Cantidad || Cantidad == "0") errors.push({text: 'la cantidad deber ser mayor a 0'})
-    if(!Long) errors.push({text: "ingresar una ubicacion valida"})
-    if(!Lat) errors.push({text: "ingresar una ubicacion valida"})
-    if(errors.length>0){
-        res.status(500).json({errors})
+    const od = await orden.findOne({_id: id, stat: 0})
+    if (od) {
+        const errors = []
+        if (!Cantidad || Cantidad == "0") errors.push({ text: 'la cantidad deber ser mayor a 0' })
+        if (!Long) errors.push({ text: "ingresar una ubicacion valida" })
+        if (!Lat) errors.push({ text: "ingresar una ubicacion valida" })
+        if (errors.length > 0) {
+            res.status(500).json({ errors })
+        }
+        else {
+            console.log(od)
+            await orden.findByIdAndUpdate(id, {
+                Cantidad, Long, Lat
+            })
+            res.send('orden actualizada')
+        }
     }
     else{
-        const od = await orden.findById(id)
-        console.log(od)
-        await orden.findByIdAndUpdate(id, {
-            Cantidad, Long, Lat
-        })
-        res.send('orden actualizada')
+        res.send('esta orden ya fue finalizada')
     }
+    
 }
 ctrl.delete = async (req,res)=>{
     const {id} = req.params
-    const usr = await user.findById(req.user.id)
-    const od = await orden.findById(id)
-    await orden.findByIdAndDelete(id)
-    usr.cart.remove(od)
-    await usr.save()
-    res.send('orden eliminada')
+    const od = await orden.findOne({_id: id, stat: 0})
+    if(od){
+        await orden.findByIdAndDelete(id)
+        res.send('orden eliminada')
+    }
+    else{
+        res.send('esta orden ya fue finalizada')
+    }
 }
 
 ctrl.create = async (req,res)=>{
-    const usr = await user.findById(req.user.id)
     console.log(req.user.id)
-    const ords = await user.find({idUser:req.user.id, stat:"0"})
+    const ords = await orden.find({idUser: req.user.id, stat:"0"})
     console.log(ords)
     if(ords.length == 0){
         res.send('el carrito esta vacio')

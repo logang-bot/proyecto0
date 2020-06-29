@@ -20,10 +20,10 @@ router.delete('/user/deleteUser/:id', user.delete)
 //rutas para el restaurante
 router.get('/restnt' ,restnt.index)
 router.get('/restnt/list' ,restnt.myindex)
-router.post('/restnt/create/:idUser', restnt.create)
-router.put('/restnt/editRestnt/:idUser/:id', restnt.edit)
-router.delete('/restnt/deleteRestnt/:idUser/:id', restnt.delete)
-router.patch('/restnt/chanProp/:idUser/:id', restnt.change)
+router.post('/restnt/create', restnt.create)
+router.put('/restnt/editRestnt/:id', restnt.edit)
+router.delete('/restnt/deleteRestnt/:id', restnt.delete)
+router.patch('/restnt/chanProp/:id', restnt.change)
 
 //rutas para el menu
 router.get('/menu/list/:idRest', menu.index)

@@ -27,12 +27,7 @@ const userSchema = new Schema({
     ordenes: [{
         type: Schema.Types.ObjectId,
         ref: 'orden'
-    }],
-    cart: [{
-        type: Schema.Types.ObjectId,
-        ref: 'orden'
     }]
-    
 })
 
 userSchema.methods.encryptPass = async (password)=>{
