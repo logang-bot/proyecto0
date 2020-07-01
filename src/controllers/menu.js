@@ -1,5 +1,6 @@
 const {restaurant, menu, user} = require('../models')
 const ctrl = {}
+const saveimage = require('../controllers/image')
 
 ctrl.index = async (req,res)=>{
     const{idRest}= req.params
@@ -18,7 +19,6 @@ ctrl.create = async (req,res)=>{
         if(!newMenu.Nombre) errors.push({text: 'por favor insertar un nombre'})
         if(!newMenu.Precio) errors.push({text: 'por favor ingresar un precio'})
         if(!newMenu.Descripcion) errors.push({text: 'por favor ingresar una descripcion'})
-        if(!newMenu.FotoProducto) errors.push({text: 'por favor ingresar una imagen'})
         if(errors.length>0){res.status(500).json({errors})}
         else{
             const men = await menu.findOne({Nombre: req.body.Nombre})
@@ -26,6 +26,12 @@ ctrl.create = async (req,res)=>{
                 res.send('ya registro este producto')
             }
             else{
+                const img = await saveimage.cre(req,res)
+                if(img == "fail") {
+                    res.send('el formato no es valido')
+                    return 
+                }
+                else newMenu.FotoProducto = img
                 newMenu.Restau = rest
                 await newMenu.save()
                 rest.menus.push(newMenu)
@@ -71,6 +77,24 @@ ctrl.edit = async (req,res)=>{
     else{
         res.send('usted no es el propietario de este restaurante')
     }
+}
+
+ctrl.edFoto = async (req,res)=>{
+    const {id} = req.params
+    const img = await saveimage.cre(req, res)
+    if(img == "fail"){
+        res.send("el formato no es valido")
+    }else if (img == "") res.send('debe subir un archivo')
+    else {
+        await menu.findByIdAndUpdate(id, {FotoProducto: img})
+        res.send('Foto actualizada')
+    }
+}
+
+ctrl.delFoto = async (req,res)=>{
+    const {id} = req.params
+    await menu.findByIdAndUpdate(id, {FotoProducto: ""})
+    res.send('Foto eliminada')
 }
 
 ctrl.delete = async(req,res)=>{

@@ -1,7 +1,7 @@
 const ctrl  = {}
-const {restaurant, user} = require('../models/')
+const {restaurant, user, imagen} = require('../models/')
 const { findById } = require('../models/menu')
-
+const saveimage = require('../controllers/image')
 
 ctrl.myindex = async (req,res)=>{
     const restnts = await restaurant.find({idPropietario:req.user.id})
@@ -40,14 +40,21 @@ ctrl.create = async (req,res)=>{
             const userr = await user.findById(req.user.id)
             newRestnt.idPropietario = userr
             newRestnt.Propietario = userr.name
+            const img = await saveimage.cre(req,res)
+            if(img == "fail") {
+                res.send('el formato no es valido')
+                return 
+            }
+            else newRestnt.Logo = img
             await newRestnt.save()
             userr.restaurants.push(newRestnt)
             await userr.save()
             res.send('restaurante creado')
+            console.log('---------------')
             console.log(newRestnt)
+
         }
     }
-   
 }
 
 ctrl.edit = async (req,res)=>{
@@ -85,8 +92,6 @@ ctrl.edit = async (req,res)=>{
                     Telefono: newRestnt.Telefono,
                     Long: newRestnt.Long,
                     Lat: newRestnt.Lat,
-                    Logo: newRestnt.Logo,
-                    FotoLugar : newRestnt.FotoLugar
                 })
                 res.send('restaurante actualizado correctamente')
             }
@@ -95,9 +100,43 @@ ctrl.edit = async (req,res)=>{
                 console.log(userr._id)
                 res.send('no eres el propietario de este negocio')
             }
-            
         }
     }
+}
+
+ctrl.editLogo = async (req,res)=>{
+    const {id} = req.params
+    const img = await saveimage.cre(req, res)
+    if(img == "fail"){
+        res.send("el formato no es valido")
+    }else if (img == "") res.send('debe subir un archivo')
+    else {
+        await restaurant.findByIdAndUpdate(id, {Logo: img})
+        res.send('Logo actualizado')
+    }
+}
+
+ctrl.delLogo = async (req,res)=>{
+    const {id} = req.params
+    await restaurant.findByIdAndUpdate(id, {Logo: ""})
+    res.send('Logo eliminado')
+}
+ctrl.editFotoLugar = async (req,res)=>{
+    const {id} = req.params
+    const img = await saveimage.cre(req, res)
+    if(img == "fail"){
+        res.send("el formato no es valido")
+    }else if (img == "") res.send('debe subir un archivo')
+    else {
+        await restaurant.findByIdAndUpdate(id, {FotoLugar: img})
+        res.send('Foto del lugar actualizado')
+    }
+}
+
+ctrl.delFotoLugar = async (req,res)=>{
+    const {id} = req.params
+    await restaurant.findByIdAndUpdate(id, {FotoLugar: ""})
+    res.send('Foto del lugar eliminado')
 }
 
 ctrl.delete = async (req, res) => {
@@ -141,6 +180,29 @@ ctrl.change = async (req,res) =>{
     }
     else{
         res.send('el usuario no esta registrado')
+    }
+    
+}
+
+ctrl.lugar = async (req,res) => {
+    const { id } = req.params
+    const restt = await restaurant.findById(id)
+    const userr = await user.findById(req.user.id)
+    if (restt.idPropietario._id.equals(userr._id)) {
+        const img = await saveimage.cre(req, res)
+        if (img == "fail") {
+            res.send("el formato no es valido")
+        } else if (img == "") res.send('debe subir un archivo')
+        else {
+            await restaurant.findByIdAndUpdate(id, { FotoLugar: img })
+            console.log('foto del lugar agregada')
+            res.send('Foto del lugar agregada')
+        }
+    }
+    else {
+        console.log(restt.idPropietario)
+        console.log(userr._id)
+        res.send('no eres el propietario actual de este negocio')
     }
     
 }

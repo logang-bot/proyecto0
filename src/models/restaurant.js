@@ -17,9 +17,9 @@ const resSchema = new Schema({
     Telefono: {type: String},
     Long: {type:String},
     Lat: {type:String},
-    Logo: {type:String},
+    Logo: {type:String, default: ""},
     FechadeRegistro: {type:Date, default:Date.now},
-    FotoLugar : {type: String}
+    FotoLugar: {type: String, default: ""}
 })
 
 module.exports = mongoose.model('restaurant', resSchema)

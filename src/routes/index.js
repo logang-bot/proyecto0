@@ -5,6 +5,7 @@ const menu = require('../controllers/menu')
 const orden = require('../controllers/orden')
 const passport = require('passport')
 const {isAuthenticated}= require('../helpers/auth')
+const saveimage = require('../controllers/image')
 
 //rutas para el usuario
 router.get('/user/list', user.index)
@@ -19,11 +20,21 @@ router.delete('/user/deleteUser/:id', user.delete)
 
 //rutas para el restaurante
 router.get('/restnt' ,restnt.index)
-router.get('/restnt/list' ,restnt.myindex)
-router.post('/restnt/create', restnt.create)
-router.put('/restnt/editRestnt/:id', restnt.edit)
-router.delete('/restnt/deleteRestnt/:id', restnt.delete)
-router.patch('/restnt/chanProp/:id', restnt.change)
+router.get('/restnt/list' , isAuthenticated, restnt.myindex)
+router.post('/restnt/create', isAuthenticated, restnt.create)
+
+router.put('/restnt/fotolugar/:id', isAuthenticated, restnt.lugar)
+router.put('/restnt/edlogo/:id', isAuthenticated, restnt.editLogo)
+router.put('/restnt/dellogo/:id', isAuthenticated, restnt.delLogo)
+router.put('/restnt/edfoto/:id', isAuthenticated, restnt.editFotoLugar)
+router.put('/restnt/delfoto/:id', isAuthenticated, restnt.delFotoLugar)
+
+router.put('/restnt/editRestnt/:id', isAuthenticated, restnt.edit)
+router.delete('/restnt/deleteRestnt/:id', isAuthenticated, restnt.delete)
+router.patch('/restnt/chanProp/:id', isAuthenticated, restnt.change)
+
+//---helper
+router.get('/img/:imgid', saveimage.get)
 
 //rutas para el menu
 router.get('/menu/list/:idRest', menu.index)
